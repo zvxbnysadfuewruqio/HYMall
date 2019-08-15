@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>vue的响应式</title>
+  </head>
+  <body>
+    <div id="app">
+      {{message}}
+      {{message}}
+      {{message}}
+
+      {{name}}
+    </div>
+    <script>
+      const obj={
+          message:'哈哈哈',
+          neme:"shy"
+        }
+      Object.keys(obj).forEach(key=>{
+        let value=obj[key]
+
+        Object.defineProperty(obj,key,{
+          set(newValue){
+            console.log('监听'+key)
+            value=newValue
+          },
+          get(){
+            return value
+          }
+        })
+      })
+      // obj.name='kobe'
+      class Dep{
+        constructor(){
+          this.subs=[]
+        }
+        addSub(Watcher){
+          this.subs.push(Watcher)
+        }
+        notify(){
+          this.subs.forEach(item=>{
+            item.update()
+          })
+        }
+      }
+      class Watcher{
+        constructor(name){
+          this.name=name
+        }
+        update(){
+          console.log(this.name)
+        }
+      }
+      const dep=new Dep()
+
+      const w1=new Watcher('张三')
+      dep.addSub(w1)
+      const w2=new Watcher('李四')
+      dep.addSub(w2)
+      const w3=new Watcher('王五')
+      dep.addSub(w3)
+      const w4=new Watcher('赵柳')
+      dep.addSub(w4)
+
+
+      dep.notify()
+    </script>
+    <script src="./node_modules/vue/dist/vue.js"></script>
+    <script>
+      const app=new Vue({
+        el:'#app',
+        data:{
+          message:'哈哈哈',
+          name:"shy"
+        }
+      })
+    </script>
+  </body>
+</html>
